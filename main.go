@@ -1,42 +1,52 @@
 package main
 
 import (
-	"flag"
 	"fmt"
+	"os"
+	"log"
 )
 
-type Flag interface {
-	collect()
+var possibleCommands = []string{
+	"create",
+	"help",
 }
 
-type StringArg struct {
-	flag string
-	unsupplied string
-	description string
+func createProject() {
+	fmt.Println("Creating...");
 }
 
-type BoolArg struct {
-	flag string
-	unsupplied bool
-	description string
+func displayHelp() {
+	fmt.Println("Help...");
 }
 
-func (s StringArg) collect() {
-	parsed := flag.String(s.flag, s.unsupplied, s.description)
-
-	fmt.Println(parsed)
+func executeCmd(cmd string) {
+	switch cmd {
+		case "create":
+			createProject();
+		case "help":
+			displayHelp();
+		default:
+			log.Fatal("Command " + cmd + "Does not exist.");
+	}
 }
 
-func (b BoolArg) collect() {
-	parsed := flag.Bool(b.flag, b.unsupplied, b.description)
+func checkIfCommandExists(cmd string) bool {
+	for _, c := range possibleCommands {
+		if c == cmd {
+			return true;
+		}
+	}
 
-	fmt.Println(parsed)
+	return false;
 }
 
 func main() {
-	// metricPtr := flag.String("metric", "chars", "Metric {chars|words|lines};.")
-	// uniquePtr := flag.Bool("unique", false, "Measure unique values of a metric.")
-	// flag.Parse()
+	cmd := os.Args[1];
+	doesCmdExist := checkIfCommandExists(cmd);
 
-	// fmt.Printf("textPtr: %s, metricPtr: %s, uniquePtr: %t\n", *projectName, *metricPtr, *uniquePtr)
+	if doesCmdExist == false {
+		log.Fatal("Command " + cmd + "Does not exist.");
+	}
+
+	executeCmd(cmd);
 }
