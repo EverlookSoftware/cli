@@ -6,33 +6,26 @@ import (
 	"log"
 )
 
-var possibleCommands = []string{
-	"create",
-	"help",
-}
+type fn func ()
 
 func createProject() {
-	fmt.Println("Creating...");
+	name := os.Args[2];
+	
+	fmt.Println("Creating...", name);
 }
 
 func displayHelp() {
 	fmt.Println("Help...");
 }
 
-func executeCmd(cmd string) {
-	switch cmd {
-		case "create":
-			createProject();
-		case "help":
-			displayHelp();
-		default:
-			log.Fatal("Command " + cmd + "Does not exist.");
-	}
+var commands = map[string] fn {
+	"create": createProject,
+	"help": displayHelp,
 }
 
 func checkIfCommandExists(cmd string) bool {
-	for _, c := range possibleCommands {
-		if c == cmd {
+	for key := range commands {
+		if key == cmd {
 			return true;
 		}
 	}
@@ -48,5 +41,5 @@ func main() {
 		log.Fatal("Command " + cmd + "Does not exist.");
 	}
 
-	executeCmd(cmd);
+	commands[cmd]();
 }
